@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.demo.myblog.auth.SignUp;
 import com.demo.myblog.profile.UserProfile;
+import com.demo.myblog.storage.SharedPrefManager;
 import com.demo.myblog.volley.VolleySingleton;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -26,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     // web application URL - login URL
     String appURL = "http://152.13.76.150/api/login.php";
@@ -114,8 +117,15 @@ public class MainActivity extends AppCompatActivity {
                     // remove leading \r or \n
                     response = response.replaceAll("\\r\\n", "");
                     if (response.equals("true")) {
-                        Intent intent = new Intent(mContext, UserProfile.class);
-                        intent.putExtra("email", EMAIL);
+                        Intent intent = new Intent(mContext, Dashboard.class);
+                        //intent.putExtra("email", EMAIL);
+
+                        // save email
+                        SharedPrefManager sharedPrefManager = new SharedPrefManager();
+                        sharedPrefManager.saveEmail(getApplicationContext(), EMAIL);
+                        Log.d(TAG, "email saved" + EMAIL);
+
+                        // launch UserProfile  activity
                         startActivity(intent);
                     } else { // login failed
                         AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
